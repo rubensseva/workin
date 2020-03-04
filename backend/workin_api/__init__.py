@@ -13,6 +13,7 @@ def create_app():
     with app.app_context():
         from .user import user_router
         from .workout import workout_router
+        from .workout_entry import workout_entry_router
 
         # Create tables for our models
         db.create_all()

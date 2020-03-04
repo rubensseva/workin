@@ -1,0 +1,19 @@
+from flask import request, make_response
+from flask import current_app as app
+from workin_api.workout_entry.workout_entry_controller import create_workout_entry, get_all_json_workout_entries
+from workin_api import db
+
+@app.route('/workout_entry', methods=['GET', 'POST'])
+def workout_entry_root():
+    if request.method == 'GET':
+        return get_all_json_workout_entries()
+    elif request.method == 'POST':
+        json_req = request.get_json()
+        if 'type' in json_req and 'amount_per_set' in json_req and 'num_sets' in json_req:
+            entry_type = json_req['type']
+            amount_per_set = json_req['amount_per_set']
+            num_sets = json_req['num_sets']
+            new_workout_entry = create_workout_entry(entry_type, amount_per_set, num_sets)
+            return make_response(f'{new_workout_entry} successfully created')
+        return make_response(f'Failed to create workout entry.. entry_type {entry_type} entry_amount_per_set {amount_per_set} entry_num_sets {num_sets}')
+    

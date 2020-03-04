@@ -1,9 +1,10 @@
-from flask import jsonify
 from datetime import datetime as dt
+from flask import jsonify
+import jwt
 from passlib.hash import sha256_crypt
 
-from .. import db
-from .user_model import User
+from workin_api import db
+from workin_api.user.user_model import User
 
 def create_user(username, email, password):
     password_hash = sha256_crypt.encrypt(password)
@@ -18,8 +19,16 @@ def create_user(username, email, password):
 
 
 def verify_user_password(username, password):
-    user = User.query.filter(username=username)
-    return sha256_crypt.verify(password, user.password_hash))
+    user = User.query.filter_by(username=username).first()
+    return sha256_crypt.verify(password, user.password_hash)
+
+def get_user_jwt(userid):
+    encoded_jwt = jwt.encode({'id': userid, 'exp': dt.utcnow() + 1800}, 'secret', algorithm='HS256')
+    return encoded_jwt
+
+def verify_user_jwt(userid):
+    encoded_jwt = jwt.encode({'id': userid}, 'secret', algorithm='HS256')
+    return encoded_jwt
 
 
 def get_all_json_users():
@@ -31,7 +40,7 @@ def get_all_json_users():
             'admin': user.admin,
             'created': user.created,
             'email': user.email,
+            'password_hash': user.password_hash
         }
         for user in users
     ])
-    
