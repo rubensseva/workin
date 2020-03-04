@@ -6,7 +6,7 @@ from workin_api import db
 from workin_api.workout.workout_model import Workout
 
 
-def create_workout(name, is_completed, user_id, workout_at, workout_type):
+def create_workout(name, is_completed, user_id, workout_at, workout_duration, workout_type):
     try:
         if not workout_at:
             workout_at = None
@@ -39,7 +39,7 @@ def get_all_json_workouts():
             'user_id': workout.user_id,
             'created': workout.created,
             'workout_at': workout.workout_at,
-            'workout_duratio': workout.workout_duration,
+            'workout_duration': workout.workout_duration,
             'workout_type': workout.workout_type
         }
         for workout in workouts

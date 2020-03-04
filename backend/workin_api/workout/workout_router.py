@@ -28,14 +28,11 @@ def workout_post():
             is_completed = json_req['is_completed'] if 'is_completed' in json_req else None
             workout_type = json_req['workout_type']
             workout_at = json_req['workout_at'] if 'workout_at' in json_req else None
-            workout_at = json_req['workout_duration'] if 'workout_duration' in json_req else None
+            workout_duration = json_req['workout_duration'] if 'workout_duration' in json_req else None
             user_id = json_req['user_id']
             new_workout = create_workout(
-                name, is_completed, user_id, workout_at, workout_type)
+                name, is_completed, user_id, workout_at, workout_duration, workout_type)
             return create_response(Status.SUCCESS, 'Workout created')
         return create_response(Status.FAILED, 'Failed to create workout, required params was missing')
     except TokenAuthError as e:
         return create_response(Status.FAILED, 'Token authentication failed', e)
-    except Exception as e:
-        print('exception occured', str(e))
-        return create_response(Status.FAILED, 'Error occured when attempting to create workout', e)
