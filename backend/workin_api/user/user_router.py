@@ -1,30 +1,39 @@
-import sys
-from flask import request, render_template, make_response, jsonify
-from datetime import datetime as dt
+from flask import request, jsonify
 from flask import current_app as app
-from workin_api.user.user_model import User
-from workin_api.shared.auth_helpers import require_auth
+from workin_api.shared.auth_controller import authorize
+from workin_api.shared.exceptions import TokenAuthError, ResourceNotFoundError
+from workin_api.shared.utils import create_response, Status
 
-from workin_api.user.user_controller import create_user, get_all_json_users, login_user, verify_jwt
+from workin_api.user.user_controller import create_user, get_all_json_users, get_personal_data, login_user
 
 
-@app.route('/user', methods=['GET', 'POST'])
-@require_auth
+@app.route('/user', methods=['GET'])
 def user_root():
-    if request.method == 'GET':
+    try:
+        token = authorize()
+        if 'user_id' in request.args:
+            return get_personal_data(int(token.get('id')), int(request.args.get('user_id')))
         return get_all_json_users()
-    elif request.method == 'POST':
-        username = request.get_json()['username']
-        email = request.get_json()['email']
-        password = request.get_json()['password']
-        if username and email and password:
-            try:
-                new_user = create_user(username, email, password)
-                return jsonify({'status': 'Success', 'msg': f'{new_user} successfully created!'})
-            except Exception as e:
-                print('Error occured', str(e))
-                return jsonify({'status': 'Failed', 'msg': 'Error occured when attempting to create user', 'err': str(e)})
-        return jsonify({'status': 'Failed', 'msg': f"failed to create user, some required params not set. Request obj: {request.get_json()}"})
+    except TokenAuthError as e:
+        return create_response(Status.FAILED, 'Token authentication failed', e)
+    except ResourceNotFoundError as e:
+        return create_response(Status.FAILED, 'Resource was not found', e)
+    except Exception as e:
+        raise
+
+@app.route('/user', methods=['POST'])
+def user_post():
+    username = request.get_json()['username']
+    email = request.get_json()['email']
+    password = request.get_json()['password']
+    if username and email and password:
+        try:
+            new_user = create_user(username, email, password)
+            return jsonify({'status': 'success', 'msg': f'{new_user} successfully created!'})
+        except Exception as e:
+            print('Error occured', str(e))
+            return jsonify({'status': 'failed', 'msg': 'Error occured when attempting to create user', 'err': str(e)})
+    return jsonify({'status': 'failed', 'msg': f"failed to create user, some required params not set. Request obj: {request.get_json()}"})
 
 
 @app.route('/user/login', methods=['POST'])
@@ -41,6 +50,3 @@ def user_login():
         'msg': 'Authentication success',
         'auth_token': new_jwt
         })
-
-
-

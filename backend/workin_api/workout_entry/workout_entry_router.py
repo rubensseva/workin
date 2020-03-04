@@ -1,11 +1,9 @@
 from flask import request, make_response
 from flask import current_app as app
 from workin_api.workout_entry.workout_entry_controller import create_workout_entry, get_all_json_workout_entries
-from workin_api.shared.auth_helpers import require_auth
 from workin_api import db
 
 @app.route('/workout_entry', methods=['GET', 'POST'])
-@require_auth
 def workout_entry_root():
     if request.method == 'GET':
         return get_all_json_workout_entries()

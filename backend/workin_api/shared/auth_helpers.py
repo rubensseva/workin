@@ -1,29 +1,23 @@
 import sys
 from flask import request, jsonify
+from workin_api.user.user_controller import verify_jwt
 
-def require_auth(func):
-    """
-        This is a decorator function to enable safe and secure endpoints
-        Use this on any flask route that should require auth jwt token
-    """
-    def wrapper():
-        print("Something is happening before the function is called.")
-        print(request.headers.get('Authorization'))
-        unverified_token = request.headers.get('Authorization').split(' ')[1]
-        print(unverified_token)
-        print(request.get_json())
-        try:
-            decoded_jwt_obj = verify_jwt(unverified_token)
-        except Exception as e:
-            print("Unexpected error:", sys.exc_info()[0])
-            print('login failed!')
-            return failed_login(e)
-        print("Something is happening after the function is called.")
+def extract_token(request_obj):
+    try:
+        return request.headers.get('Authorization').split(' ')[1]
+    except:
+        print('Couldnt parse auth token in http header')
+        raise
+
+def decode_token(unverified_token):
+    print("Authenticating token...")
+    print(unverified_token)
+    try:
+        decoded_jwt_obj = verify_jwt(unverified_token)
         print('got token', decoded_jwt_obj)
         print('Auth considered successful')
-        return func()
-    return wrapper
-
-def failed_login(err):
-    return jsonify({'status': 'Failed', 'msg': 'Token was not valid, login failed', 'err': str(err)})
-
+        return decoded_jwt_obj
+    except Exception as e:
+        print("Unexpected error:", str(e))
+        print('login failed!')
+        raise
