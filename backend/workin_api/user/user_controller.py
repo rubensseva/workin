@@ -8,6 +8,7 @@ from workin_api import db
 from workin_api.user.user_model import User
 from workin_api.shared.exceptions import ResourceNotFoundError
 
+
 def create_user(username, email, password):
     try:
         password_hash = sha256_crypt.encrypt(password)
@@ -26,22 +27,27 @@ def create_user(username, email, password):
         print('got general error:', str(e))
         raise
 
+
 def login_user(username, password):
     user = User.query.filter_by(username=username).first()
     if not user:
         print(f'user {username} does not exist...')
         return None
-    if (verify_password_hash(password, user.password_hash)):
+    if verify_password_hash(password, user.password_hash):
         return get_user_jwt(user.id)
     print('user password did not match hash...')
     return None
 
+
 def verify_password_hash(password, password_hash):
     return sha256_crypt.verify(password, password_hash)
 
+
 def get_user_jwt(userid):
-    encoded_jwt = jwt.encode({'id': userid, 'exp': dt.timestamp(dt.utcnow() + timedelta(hours=3))}, 'secret', algorithm='HS256').decode('utf-8')
+    encoded_jwt = jwt.encode({'id': userid, 'exp': dt.timestamp(
+        dt.utcnow() + timedelta(hours=3))}, 'secret', algorithm='HS256').decode('utf-8')
     return encoded_jwt
+
 
 def verify_jwt(token):
     try:
@@ -56,9 +62,10 @@ def verify_jwt(token):
     except jwt.ExpiredSignatureError:
         print('got expiredsignature error')
         raise Exception('jwt expired')
-    except:
+    except BaseException:
         print('got general error when handling jwt')
         raise Exception('jwt irregular error')
+
 
 def get_all_json_users():
     users = User.query.all()
@@ -70,21 +77,24 @@ def get_all_json_users():
         for user in users
     ])
 
+
 def get_personal_data(user_id_logged_in, user_id_to_fetch):
     user = User.query.filter_by(id=user_id_to_fetch).first()
     if not user:
-        raise ResourceNotFoundError(user_id_to_fetch, 'Could not find any user by provided id')
+        raise ResourceNotFoundError(
+            user_id_to_fetch,
+            'Could not find any user by provided id')
     if user_id_logged_in == user_id_to_fetch:
         print('returning sensitive')
         return jsonify({
-                'id': user.id,
-                'username': user.username,
-                'admin': user.admin,
-                'created': user.created,
-                'email': user.email,
-                'password_hash': user.password_hash
-            })
-    return jsonify({
             'id': user.id,
             'username': user.username,
+            'admin': user.admin,
+            'created': user.created,
+            'email': user.email,
+            'password_hash': user.password_hash
         })
+    return jsonify({
+        'id': user.id,
+        'username': user.username,
+    })

@@ -4,6 +4,7 @@ load_dotenv()
 
 print(environ)
 
+
 class Config:
     """Set Flask configuration vars from .env file."""
 
@@ -16,4 +17,5 @@ class Config:
     # Database
     SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI')
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
+    SQLALCHEMY_TRACK_MODIFICATIONS = environ.get(
+        'SQLALCHEMY_TRACK_MODIFICATIONS')
