@@ -1,5 +1,6 @@
 from datetime import datetime as dt, timedelta
 from flask import jsonify
+from sqlalchemy.exc import SQLAlchemyError
 import jwt
 from passlib.hash import sha256_crypt
 
@@ -7,15 +8,22 @@ from workin_api import db
 from workin_api.user.user_model import User
 
 def create_user(username, email, password):
-    password_hash = sha256_crypt.encrypt(password)
-    new_user = User(username=username,
-                    password_hash=password_hash,
-                    email=email,
-                    created=dt.now(),
-                    admin=False)
-    db.session.add(new_user)  # Adds new User record to database
-    db.session.commit()  # Commits all changes
-    return new_user
+    try:
+        password_hash = sha256_crypt.encrypt(password)
+        new_user = User(username=username,
+                        password_hash=password_hash,
+                        email=email,
+                        created=dt.now(),
+                        admin=False)
+        db.session.add(new_user)  # Adds new User record to database
+        db.session.commit()  # Commits all changes
+        return new_user
+    except SQLAlchemyError as e:
+        print('got sqlalchemy error:', str(e))
+        raise
+    except Exception as e:
+        print('got general error:', str(e))
+        raise
 
 def login_user(username, password):
     user = User.query.filter_by(username=username).first()
@@ -31,21 +39,25 @@ def verify_password_hash(password, password_hash):
     return sha256_crypt.verify(password, password_hash)
 
 def get_user_jwt(userid):
-    encoded_jwt = jwt.encode({'id': userid, 'exp': (dt.utcnow() + timedelta(hours=3)).timestamp()}, 'secret', algorithm='HS256').decode('utf-8')
+    encoded_jwt = jwt.encode({'id': userid, 'exp': dt.timestamp(dt.utcnow() + timedelta(hours=3))}, 'secret', algorithm='HS256').decode('utf-8')
     return encoded_jwt
 
 def verify_jwt(token):
     try:
         decoded_jwt_obj = jwt.decode(token, 'secret', algorithm='HS256')
         return decoded_jwt_obj
-    except jwt.DecodeError:
-        print('got decode error when handling jwt')
     except jwt.InvalidSignatureError:
         print('got invalid signature error when handling jwt')
+        raise Exception('jwt signature error')
+    except jwt.DecodeError:
+        print('got decode error when handling jwt')
+        raise Exception('jwt token was not valid')
     except jwt.ExpiredSignatureError:
         print('got expiredsignature error')
+        raise Exception('jwt expired')
     except:
         print('got general error when handling jwt')
+        raise Exception('jwt irregular error')
 
 def get_all_json_users():
     users = User.query.all()
