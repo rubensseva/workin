@@ -1,4 +1,4 @@
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from flask import jsonify
 import jwt
 from passlib.hash import sha256_crypt
@@ -17,19 +17,35 @@ def create_user(username, email, password):
     db.session.commit()  # Commits all changes
     return new_user
 
-
-def verify_user_password(username, password):
+def login_user(username, password):
     user = User.query.filter_by(username=username).first()
-    return sha256_crypt.verify(password, user.password_hash)
+    if not user:
+        print(f'user {username} does not exist...')
+        return None
+    if (verify_password_hash(password, user.password_hash)):
+        return get_user_jwt(user.id)
+    print('user password did not match hash...')
+    return None
+
+def verify_password_hash(password, password_hash):
+    return sha256_crypt.verify(password, password_hash)
 
 def get_user_jwt(userid):
-    encoded_jwt = jwt.encode({'id': userid, 'exp': dt.utcnow() + 1800}, 'secret', algorithm='HS256')
+    encoded_jwt = jwt.encode({'id': userid, 'exp': (dt.utcnow() + timedelta(hours=3)).timestamp()}, 'secret', algorithm='HS256').decode('utf-8')
     return encoded_jwt
 
-def verify_user_jwt(userid):
-    encoded_jwt = jwt.encode({'id': userid}, 'secret', algorithm='HS256')
-    return encoded_jwt
-
+def verify_jwt(token):
+    try:
+        decoded_jwt_obj = jwt.decode(token, 'secret', algorithm='HS256')
+        return decoded_jwt_obj
+    except jwt.DecodeError:
+        print('got decode error when handling jwt')
+    except jwt.InvalidSignatureError:
+        print('got invalid signature error when handling jwt')
+    except jwt.ExpiredSignatureError:
+        print('got expiredsignature error')
+    except:
+        print('got general error when handling jwt')
 
 def get_all_json_users():
     users = User.query.all()

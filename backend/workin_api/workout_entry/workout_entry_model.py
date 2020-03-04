@@ -7,7 +7,7 @@ class WorkoutEntry(db.Model):
                         primary_key=True)
     entry_type = db.Column(db.String(64),
                          index=False,
-                         unique=True,
+                         unique=False,
                          nullable=False)
     amount_per_set = db.Column(db.Integer,
                         index=False,

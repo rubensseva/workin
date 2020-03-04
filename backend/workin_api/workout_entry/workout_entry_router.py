@@ -9,11 +9,12 @@ def workout_entry_root():
         return get_all_json_workout_entries()
     elif request.method == 'POST':
         json_req = request.get_json()
-        if 'type' in json_req and 'amount_per_set' in json_req and 'num_sets' in json_req:
+        if 'type' in json_req and 'amount_per_set' in json_req and 'num_sets' in json_req and 'workout_id' in json_req:
             entry_type = json_req['type']
             amount_per_set = json_req['amount_per_set']
             num_sets = json_req['num_sets']
-            new_workout_entry = create_workout_entry(entry_type, amount_per_set, num_sets)
+            workout_id = json_req['workout_id']
+            new_workout_entry = create_workout_entry(entry_type, amount_per_set, num_sets, workout_id)
             return make_response(f'{new_workout_entry} successfully created')
-        return make_response(f'Failed to create workout entry.. entry_type {entry_type} entry_amount_per_set {amount_per_set} entry_num_sets {num_sets}')
+        return make_response(f'Failed to create workout entry.. request obj: {json_req}')
     

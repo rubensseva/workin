@@ -11,14 +11,13 @@ def workout_root():
         return get_all_json_workouts()
     elif request.method == 'POST':
         json_req = request.get_json()
-        if 'name' in json_req and 'workout_type' in json_req and 'user_id' in json_req and 'workout_id' in json_req:
+        if 'name' in json_req and 'workout_type' in json_req and 'user_id' in json_req:
             name = json_req['name']
             is_completed = json_req['is_completed'] if 'is_completed' in json_req else None
             workout_type = json_req['workout_type']
             workout_at = json_req['workout_at'] if 'workout_at' in json_req else None
             user_id = json_req['user_id']
-            workout_id = json_req['workout_id']
             new_workout = create_workout(name, is_completed, user_id, workout_at, workout_type)
             return make_response(f'{new_workout} successfully created')
-        return make_response(f'Failed to create workout.. workout_name {workout_name} workout_type {workout_type}')
+        return make_response(f'Failed to create workout.. request obj: {json_req}')
     
