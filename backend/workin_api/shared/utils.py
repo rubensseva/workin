@@ -18,3 +18,7 @@ def create_response(status, message, err=None):
     if err:
         response['err'] = str(err)
     return jsonify(response)
+
+def create_login_success_response(token):
+    response = {'status': STATUS_MAP[Status.SUCCESS], 'msg': 'Authentication success', 'jwt': token}
+    return jsonify(response)

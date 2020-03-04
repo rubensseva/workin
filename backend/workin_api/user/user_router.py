@@ -3,7 +3,7 @@ from flask import request, jsonify
 from flask import current_app as app
 from workin_api.shared.auth_controller import authorize
 from workin_api.shared.exceptions import TokenAuthError, ResourceNotFoundError
-from workin_api.shared.utils import create_response, Status
+from workin_api.shared.utils import create_response, create_login_success_response, Status
 from workin_api.user.user_controller import create_user, get_all_json_users, get_personal_data, login_user
 
 
@@ -28,12 +28,8 @@ def user_post():
     password = request.get_json()['password']
     if username and email and password:
         new_user = create_user(username, email, password)
-        return jsonify({'status': 'success',
-                        'msg': f'{new_user} successfully created!'})
-    return jsonify(
-        {
-            'status': 'failed',
-            'msg': f"failed to create user, some required params not set. Request obj: {request.get_json()}"})
+        return create_response(Status.SUCCESS, 'User created')
+    return create_response(Status.FAILED, 'Failed to create user, some params not set')
 
 
 @app.route('/user/login', methods=['POST'])
@@ -41,13 +37,7 @@ def user_login():
     username = request.get_json()['username']
     password = request.get_json()['password']
     new_jwt = login_user(username, password)
-    print(new_jwt)
     if not new_jwt:
-        print('login failed...')
-        return jsonify(
-            {'status': 'Failed', 'msg': 'Authentication failed, username or password not correct'})
-    return jsonify({
-        'status': 'Success',
-        'msg': 'Authentication success',
-        'auth_token': new_jwt
-    })
+        return create_response(Status.FAILED, 'Authentication failed, username and/or password not correct')
+    return create_login_success_response(new_jwt)
+

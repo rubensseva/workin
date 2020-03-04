@@ -28,6 +28,10 @@ class Workout(db.Model):
                            index=False,
                            unique=False,
                            nullable=True)
+    workout_duration = db.Column(db.Integer,
+                           index=False,
+                           unique=False,
+                           nullable=True)
     workout_type = db.Column(db.String(64),
                              index=False,
                              unique=False,
