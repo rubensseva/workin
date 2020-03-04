@@ -44,4 +44,4 @@ def get_all_json_workouts():
         for workout in workouts
     ]
     print(workout_dicts)
-    return jsonify(workout_dicts)
+    return workout_dicts
