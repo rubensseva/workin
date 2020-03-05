@@ -4,7 +4,7 @@ from flask import current_app as app
 from workin_api.shared.auth_controller import authorize
 from workin_api.shared.exceptions import TokenAuthError, ResourceNotFoundError
 from workin_api.workout.workout_model import Workout
-from workin_api.workout.workout_controller import create_workout, get_all_json_workouts
+from workin_api.workout.workout_controller import create_workout, get_all_json_workouts, get_user_workouts
 from workin_api.shared.utils import create_response, Status
 from workin_api import db
 
@@ -12,8 +12,9 @@ from workin_api import db
 @app.route('/workout', methods=['GET'])
 def workout_get():
     try:
-        authorize()
-        return create_response(get_all_json_workouts(), Status.SUCCESS, 200)
+        token = authorize()
+        print('token:', token)
+        return create_response(get_user_workouts(token.get('id')), Status.SUCCESS, 200)
     except TokenAuthError as e:
         return create_response('Token authentication failed', Status.FAILED, 401, e)
 

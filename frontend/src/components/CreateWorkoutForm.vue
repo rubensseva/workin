@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='container'>
     <div> Create a new workout? </div>
     <input v-model='name' placeholder='name'/>
     <input v-model='duration' placeholder='duration'/>
@@ -23,6 +23,10 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+}
 input {
   margin: 10px;
 }

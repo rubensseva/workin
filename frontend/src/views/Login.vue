@@ -1,10 +1,10 @@
 <template>
   <div class='root'>
-    <LoginTest/>
     <div class='container'>
       <p> Welcome to Workin! Please login below </p>
       <input placeholder='username' v-model='firstName'/>
       <input placeholder='password' v-model='password'/>
+      <div v-if='this.$store.state.user.isAuthenticated'> You are logged in! </div>
       <button class='primaryButton' v-on:click='loginSubmit'>Submit</button>
     </div>
   </div>
@@ -13,17 +13,29 @@
 
 <script>
 import axios from 'axios'
-import LoginTest from '@/components/LoginTest'
 
 export default {
   name: 'Login',
-  components: {
-    LoginTest
-  },
   data: function() {
     return {
     firstName: '',
     password: '',
+    }
+  },
+  mounted() {
+    if (localStorage.getItem('jwt') !== null) {
+      axios({
+        method: 'get',
+        url: 'user/verify_token',
+        headers: {
+          Authorization: `Basic ${localStorage.getItem('jwt')}`
+        }
+      })
+      .then((response) => {
+        this.$store.commit('userLoggedIn')
+        this.$store.commit('setCurrentUser', response.data.payload)
+      })
+      .catch(err => console.log(err))
     }
   },
   methods: {
@@ -31,14 +43,12 @@ export default {
       axios({
         method: 'post',
         url: 'user/login',
-        timeout: 4000, // Let's say you want to wait at least 4 mins
         data: {
           username: this.firstName,
           password: this.password
         }
       })
       .then((response) => {
-        console.log(response);
         localStorage.setItem('jwt', response.data.jwt);
         this.$store.commit('userLoggedIn')
         return axios({
@@ -53,8 +63,7 @@ export default {
         })
       })
       .then(response => {
-        console.log(response)
-        this.$store.commit('setCurrentUser', response.data)
+        this.$store.commit('setCurrentUser', response.data.payload[0])
       })
       .catch(err => console.log(err))
     }

@@ -30,3 +30,30 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+    def to_dict(self):
+        return {
+                'id': self.id,
+                'username': self.username,
+                'workouts': [
+                {
+                    'id': workout.id,
+                    'name': workout.name,
+                    'is_completed': workout.is_completed,
+                    'created': workout.created,
+                    'workout_at': workout.workout_at,
+                    'workout_duration': workout.workout_duration,
+                    'workout_type': workout.workout_type,
+                    'workout_entries': [
+                        {
+                            'id': entry.id,
+                            'entry_type': entry.entry_type,
+                            'amount_per_set': entry.amount_per_set,
+                            'num_sets': entry.num_sets
+                        }
+                        for entry in workout.workout_entries
+                    ]
+                }
+                for workout in self.workouts
+                ]
+            }

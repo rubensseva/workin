@@ -13,10 +13,12 @@ STATUS_MAP = {
 }
 
 
-def create_response(message, status, status_code, err=None):
+def create_response(message, status, status_code, payload=None, err=None):
     response = {'status': STATUS_MAP[status], 'msg': message}
     if err:
         response['err'] = str(err)
+    if payload:
+        response['payload'] = payload
     return make_response(jsonify(response), status_code)
 
 def create_login_success_response(token):

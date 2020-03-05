@@ -79,20 +79,12 @@ def get_all_json_users():
 
 
 def get_users(id=None, username=None, email=None):
-    print(id, username, email)
-    filter_data = {'user_id': id, 'username': username, 'email': email}
+    filter_data = {'id': id, 'username': username, 'email': email}
     filter_data = {key: value for (key, value) in filter_data.items()
                if value}
     users = User.query.filter_by(**filter_data).all()
-    dicts =  [
-        {
-            'id': user.id,
-            'username': user.username,
-        }
-        for user in users
-    ]
-    print(dicts)
-    return dicts
+    user_dicts = [user.to_dict() for user in users]
+    return user_dicts
 
 
 def get_personal_data(user_id_logged_in, user_id_to_fetch):
@@ -102,7 +94,6 @@ def get_personal_data(user_id_logged_in, user_id_to_fetch):
             user_id_to_fetch,
             'Could not find any user by provided id')
     if user_id_logged_in == user_id_to_fetch:
-        print('returning sensitive')
         return jsonify({
             'id': user.id,
             'username': user.username,

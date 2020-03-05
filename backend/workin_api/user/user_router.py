@@ -15,7 +15,7 @@ def user_get():
             return get_personal_data(
                 int(token.get('id')), int(request.args.get('user_id')))
         if 'user_id' in request.args or 'username' in request.args or 'email' in request.args:
-            return create_response(get_users(request.args.get('user_id'), request.args.get('username'), request.args.get('email')), Status.SUCCESS, 200)
+            return create_response('User found', Status.SUCCESS, 200, payload=get_users(request.args.get('user_id'), request.args.get('username'), request.args.get('email')))
         return get_all_json_users()
     except TokenAuthError as e:
         return create_response('Token authentication failed', Status.FAILED, 401, e)
@@ -32,6 +32,16 @@ def user_post():
         new_user = create_user(username, email, password)
         return create_response('User created', Status.SUCCESS, 200)
     return create_response('Failed to create user, some params not set', Status.FAILED, 422)
+
+
+@app.route('/user/verify_token', methods=['GET'])
+def user_verify_token():
+    try: 
+        token = authorize()
+        user = get_users(id=token.get('id'))[0]
+        return create_response('Token verification success', Status.SUCCESS, 200, payload=user)
+    except TokenAuthError as e:
+        return create_response('Token verification failed', Status.FAILED, 401)
 
 
 @app.route('/user/login', methods=['POST'])

@@ -36,3 +36,4 @@ class Workout(db.Model):
                              index=False,
                              unique=False,
                              nullable=False)
+    workout_entries = db.relationship('WorkoutEntry')

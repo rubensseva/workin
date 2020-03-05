@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from workin_api import db
 from workin_api.workout.workout_model import Workout
+from workin_api.user.user_model import User
 
 
 def create_workout(name, is_completed, user_id, workout_at, workout_duration, workout_type):
@@ -31,6 +32,26 @@ def create_workout(name, is_completed, user_id, workout_at, workout_duration, wo
 
 def get_all_json_workouts():
     workouts = Workout.query.all()
+    workout_dicts = [
+        {
+            'id': workout.id,
+            'name': workout.name,
+            'is_completed': workout.is_completed,
+            'user_id': workout.user_id,
+            'created': workout.created,
+            'workout_at': workout.workout_at,
+            'workout_duration': workout.workout_duration,
+            'workout_type': workout.workout_type
+        }
+        for workout in workouts
+    ]
+    print(workout_dicts)
+    return workout_dicts
+
+
+def get_user_workouts(user_id):
+    user = User.query.get(user_id)
+    workouts = user.workouts
     workout_dicts = [
         {
             'id': workout.id,

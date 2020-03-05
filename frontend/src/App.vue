@@ -32,7 +32,6 @@
   color: #42b983;
 }
 
-
 /* Custom global styles */
 .primaryButton {
   margin: 10px 0px 20px 0px;

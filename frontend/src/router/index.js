@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Workouts from '../views/Workouts.vue'
+import WorkoutDetails from '../views/WorkoutDetails.vue'
 
 Vue.use(VueRouter)
 
@@ -29,6 +30,11 @@ const routes = [
     path: '/workouts',
     name: 'Workouts',
     component: Workouts
+  },
+  {
+    path: '/workout/:id',
+    name: 'WorkoutDetails',
+    component: WorkoutDetails
   },
 ]
 
