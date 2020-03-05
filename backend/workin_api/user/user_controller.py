@@ -78,6 +78,23 @@ def get_all_json_users():
     ])
 
 
+def get_users(id=None, username=None, email=None):
+    print(id, username, email)
+    filter_data = {'user_id': id, 'username': username, 'email': email}
+    filter_data = {key: value for (key, value) in filter_data.items()
+               if value}
+    users = User.query.filter_by(**filter_data).all()
+    dicts =  [
+        {
+            'id': user.id,
+            'username': user.username,
+        }
+        for user in users
+    ]
+    print(dicts)
+    return dicts
+
+
 def get_personal_data(user_id_logged_in, user_id_to_fetch):
     user = User.query.filter_by(id=user_id_to_fetch).first()
     if not user:

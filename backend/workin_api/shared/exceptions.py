@@ -40,3 +40,16 @@ class MissingURLParamError(Error):
     def __init__(self, expression, message):
         self.expression = expression
         self.message = message
+
+
+class NotUniqueIdentifiersError(Error):
+    """Exception raised for errors on token auth
+
+    Attributes:
+        expression -- input expression in which the error occurred
+        message -- explanation of the error
+    """
+
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message

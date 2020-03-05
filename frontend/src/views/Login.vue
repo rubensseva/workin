@@ -1,20 +1,25 @@
 <template>
   <div class='root'>
-    <form class='container'>
+    <LoginTest/>
+    <div class='container'>
       <p> Welcome to Workin! Please login below </p>
       <input placeholder='username' v-model='firstName'/>
       <input placeholder='password' v-model='password'/>
-    </form>
-    <button v-on:click='loginSubmit'>Submit</button>
+      <button class='primaryButton' v-on:click='loginSubmit'>Submit</button>
+    </div>
   </div>
 </template>
 
 
 <script>
 import axios from 'axios'
+import LoginTest from '@/components/LoginTest'
 
 export default {
   name: 'Login',
+  components: {
+    LoginTest
+  },
   data: function() {
     return {
     firstName: '',
@@ -35,9 +40,23 @@ export default {
       .then((response) => {
         console.log(response);
         localStorage.setItem('jwt', response.data.jwt);
-      }, (error) => {
-        console.log(error);
-      });
+        this.$store.commit('userLoggedIn')
+        return axios({
+          method: 'get',
+          url: 'user',
+          params: {
+            username: this.firstName
+          },
+          headers: {
+            Authorization: `Basic ${response.data.jwt}`
+          }
+        })
+      })
+      .then(response => {
+        console.log(response)
+        this.$store.commit('setCurrentUser', response.data)
+      })
+      .catch(err => console.log(err))
     }
   }
 }
@@ -47,6 +66,7 @@ export default {
 <style scoped>
 .root {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -75,7 +95,4 @@ export default {
   margin: 0px 0px 20px 0px
 }
 
-.container > button {
-  margin: 10px 0px 20px 0px
-}
 </style>
