@@ -13,9 +13,9 @@ from workin_api import db
 def workout_get():
     try:
         authorize()
-        return create_response(Status.SUCCESS, get_all_json_workouts())
+        return create_response(get_all_json_workouts(), Status.SUCCESS, 200)
     except TokenAuthError as e:
-        return create_response(Status.FAILED, 'Token authentication failed', e)
+        return create_response('Token authentication failed', Status.FAILED, 401, e)
 
 
 @app.route('/workout', methods=['POST'])
@@ -32,7 +32,7 @@ def workout_post():
             user_id = json_req['user_id']
             new_workout = create_workout(
                 name, is_completed, user_id, workout_at, workout_duration, workout_type)
-            return create_response(Status.SUCCESS, 'Workout created')
-        return create_response(Status.FAILED, 'Failed to create workout, required params was missing')
+            return create_response('Workout created', Status.SUCCESS, 200)
+        return create_response('Failed to create workout, required params was missing', Status.FAILED, 422)
     except TokenAuthError as e:
-        return create_response(Status.FAILED, 'Token authentication failed', e)
+        return create_response('Token authentication failed', Status.FAILED, 401, e)

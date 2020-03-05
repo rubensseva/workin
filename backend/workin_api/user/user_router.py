@@ -16,9 +16,9 @@ def user_get():
                 int(token.get('id')), int(request.args.get('user_id')))
         return get_all_json_users()
     except TokenAuthError as e:
-        return create_response(Status.FAILED, 'Token authentication failed', e)
+        return create_response('Token authentication failed', Status.FAILED, 401, e)
     except ResourceNotFoundError as e:
-        return create_response(Status.FAILED, 'Resource was not found', e)
+        return create_response('Resource was not found', Status.FAILED, 404, e)
 
 
 @app.route('/user', methods=['POST'])
@@ -28,8 +28,8 @@ def user_post():
     password = request.get_json()['password']
     if username and email and password:
         new_user = create_user(username, email, password)
-        return create_response(Status.SUCCESS, 'User created')
-    return create_response(Status.FAILED, 'Failed to create user, some params not set')
+        return create_response('User created', Status.SUCCESS, 200)
+    return create_response('Failed to create user, some params not set', Status.FAILED, 422)
 
 
 @app.route('/user/login', methods=['POST'])
@@ -38,6 +38,6 @@ def user_login():
     password = request.get_json()['password']
     new_jwt = login_user(username, password)
     if not new_jwt:
-        return create_response(Status.FAILED, 'Authentication failed, username and/or password not correct')
+        return create_response('Authentication failed, username and/or password not correct', Status.FAILED, 401)
     return create_login_success_response(new_jwt)
 

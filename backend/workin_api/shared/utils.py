@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, make_response
 from enum import Enum, auto
 
 
@@ -13,12 +13,12 @@ STATUS_MAP = {
 }
 
 
-def create_response(status, message, err=None):
+def create_response(message, status, status_code, err=None):
     response = {'status': STATUS_MAP[status], 'msg': message}
     if err:
         response['err'] = str(err)
-    return jsonify(response)
+    return make_response(jsonify(response), status_code)
 
 def create_login_success_response(token):
     response = {'status': STATUS_MAP[Status.SUCCESS], 'msg': 'Authentication success', 'jwt': token}
-    return jsonify(response)
+    return make_response(jsonify(response), 200)
