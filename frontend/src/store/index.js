@@ -24,7 +24,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getCurrentUser(context) {
+    tokenLogin(context) {
       if (!localStorage.getItem('jwt')) {
         context.commit('userLoggedOut')
         context.commit('setCurrentUser', {})
@@ -48,6 +48,7 @@ export default new Vuex.Store({
       })
     },
     login(context, { username, password }) {
+      console.log(username, password)
       axios({
         method: 'post',
         url: 'user/login',
