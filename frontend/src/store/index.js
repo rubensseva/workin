@@ -122,6 +122,24 @@ export default new Vuex.Store({
           Authorization: `Basic ${localStorage.getItem('jwt')}`
         }
       })
+    },
+    createWorkoutPlan(context, {name, weekDayStart}) {
+      let data = {
+        name: name,
+        week_day_start: weekDayStart,
+        user_id: context.state.user.user.id,
+      }
+      console.log('here', data)
+      axios({
+        method: 'post',
+        url: '/workout_plan',
+        data: data,
+        headers: {
+          Authorization: `Basic ${localStorage.getItem('jwt')}`
+        }
+      })
+        .then(() => context.dispatch('tokenLogin'))
+        .catch(err => console.log(err))
     }
   },
   modules: {

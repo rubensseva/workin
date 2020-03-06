@@ -30,7 +30,7 @@ class WorkoutPlan(db.Model):
         return {
                 'id': self.id,
                 'created': self.created,
-                'name': self.username,
+                'name': self.name,
                 'week_day_start': self.week_day_start,
                 'user_id': self.user_id,
                 'workouts': [

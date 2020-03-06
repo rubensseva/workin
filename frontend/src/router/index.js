@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import NewUser from '../views/NewUser.vue'
 import Workouts from '../views/Workouts.vue'
 import WorkoutDetails from '../views/WorkoutDetails.vue'
+import WorkoutPlans from '../views/WorkoutPlans.vue'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,11 @@ const routes = [
     path: '/workout/:id',
     name: 'WorkoutDetails',
     component: WorkoutDetails
+  },
+  {
+    path: '/workout_plans',
+    name: 'WorkoutPlans',
+    component: WorkoutPlans
   },
 ]
 
