@@ -15,6 +15,7 @@ def create_app():
         from .user import user_router
         from .workout import workout_router
         from .workout_entry import workout_entry_router
+        from .workout_plan import workout_plan_router
 
         # Create tables for our models
         db.create_all()

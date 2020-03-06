@@ -25,6 +25,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch('tokenLogin')
+      .catch(err => console.log(err))
   },
   methods: {
     createUser() {

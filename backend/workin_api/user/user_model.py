@@ -7,6 +7,10 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer,
                    primary_key=True)
+    created = db.Column(db.DateTime,
+                        index=False,
+                        unique=False,
+                        nullable=False)
     username = db.Column(db.String(64),
                          index=False,
                          unique=True,
@@ -18,15 +22,12 @@ class User(db.Model):
                       index=True,
                       unique=True,
                       nullable=False)
-    created = db.Column(db.DateTime,
-                        index=False,
-                        unique=False,
-                        nullable=False)
     admin = db.Column(db.Boolean,
                       index=False,
                       unique=False,
                       nullable=False)
     workouts = db.relationship('Workout')
+    workout_plans = db.relationship('WorkoutPlan')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -34,26 +35,14 @@ class User(db.Model):
     def to_dict(self):
         return {
                 'id': self.id,
+                'created': self.created,
                 'username': self.username,
                 'workouts': [
-                {
-                    'id': workout.id,
-                    'name': workout.name,
-                    'is_completed': workout.is_completed,
-                    'created': workout.created,
-                    'workout_at': workout.workout_at,
-                    'workout_duration': workout.workout_duration,
-                    'workout_type': workout.workout_type,
-                    'workout_entries': [
-                        {
-                            'id': entry.id,
-                            'entry_type': entry.entry_type,
-                            'amount_per_set': entry.amount_per_set,
-                            'num_sets': entry.num_sets
-                        }
-                        for entry in workout.workout_entries
-                    ]
-                }
-                for workout in self.workouts
+                    workout.to_dict()
+                    for workout in self.workouts
+                ],
+                'workout_plans': [
+                    workout_plan.to_dict()
+                    for workout_plan in self.workout_plans
                 ]
             }

@@ -12,10 +12,10 @@ from workin_api.shared.exceptions import ResourceNotFoundError
 def create_user(username, email, password):
     try:
         password_hash = sha256_crypt.encrypt(password)
-        new_user = User(username=username,
+        new_user = User(created=dt.now(),
+                        username=username,
                         password_hash=password_hash,
                         email=email,
-                        created=dt.now(),
                         admin=False)
         db.session.add(new_user)  # Adds new User record to database
         db.session.commit()  # Commits all changes
@@ -66,16 +66,6 @@ def verify_jwt(token):
         print('got general error when handling jwt')
         raise Exception('jwt irregular error')
 
-
-def get_all_json_users():
-    users = User.query.all()
-    return jsonify([
-        {
-            'id': user.id,
-            'username': user.username,
-        }
-        for user in users
-    ])
 
 
 def get_users(id=None, username=None, email=None):

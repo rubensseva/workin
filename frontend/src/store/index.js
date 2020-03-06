@@ -91,7 +91,7 @@ export default new Vuex.Store({
         name: name,
         workout_type: workoutType,
         duration: duration,
-        workout_at: workoutAt
+        workout_at: workoutAt,
       }
       console.log('data', data)
       axios({
@@ -105,11 +105,13 @@ export default new Vuex.Store({
         .then(() => context.dispatch('tokenLogin'))
         .catch(err => console.log(err))
     },
-    createWorkoutEntry(context, {type, amountPerSet, numSets, workoutId}) {
+    createWorkoutEntry(context, {type, amountPerSet, numSets, duration, weight, workoutId}) {
       let data = {
         type: type,
         amount_per_set: amountPerSet,
         num_sets: numSets,
+        duration: duration,
+        weight: weight,
         workout_id: workoutId
       }
       return axios({

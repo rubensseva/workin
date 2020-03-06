@@ -28,17 +28,20 @@
       </div>
     </div>
       <div>
-        Exercises in this workout:
+        Exercises in this workout
       </div>
+      type | amount per set | num sets | duration | weight
     <div class='workoutEntriesContainer workoutContainer'>
       <li v-for='workout_entry in workout.workout_entries' :key='workout_entry.id'>
-        {{ workout_entry.entry_type }} | {{ workout_entry.amount_per_set }} | {{ workout_entry.num_sets }}
+        {{ workout_entry.entry_type }} | {{ workout_entry.amount_per_set }} | {{ workout_entry.num_sets }} | {{ workout_entry.duration }} | {{ workout_entry.weight }}
       </li>
     </div>
     <div class="addWorkoutEntryMiniForm">
       <input type="text" placeholder="entry type" v-model='newWorkoutEntry.type'/>
       <input type="number" placeholder="amount per set" v-model='newWorkoutEntry.amountPerSet'/>
       <input type="number" placeholder="number of sets" v-model='newWorkoutEntry.numSets'/>
+      <input type="number" placeholder="duration" v-model='newWorkoutEntry.duration'/>
+      <input type="number" placeholder="weight" v-model='newWorkoutEntry.weight'/>
     </div>
     <button class='primaryButton' v-on:click='createWorkoutEntry()'>Add new entry to workout</button>
   </div>
@@ -52,9 +55,11 @@ export default {
     return {
       workout: {},
       newWorkoutEntry: {
-        type: '',
-        amountPerSet: 0,
-        numSets: 0
+        type: null,
+        amountPerSet: null,
+        numSets: null,
+        duration: null,
+        weight: null,
       }
     }
   },
@@ -87,6 +92,8 @@ export default {
         type: this.newWorkoutEntry.type, 
         amountPerSet: this.newWorkoutEntry.amountPerSet,
         numSets: this.newWorkoutEntry.numSets,
+        duration: this.newWorkoutEntry.duration,
+        weight: this.newWorkoutEntry.weight,
         workoutId: this.$route.params.id
       })
         .then(() => {
