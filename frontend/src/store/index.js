@@ -10,7 +10,7 @@ export default new Vuex.Store({
       user: {},
       isAuthenticated: false,
       workouts: {},
-    }
+    },
   },
   mutations: {
     userLoggedIn(state) {
@@ -25,30 +25,33 @@ export default new Vuex.Store({
   },
   actions: {
     tokenLogin(context) {
-      if (!localStorage.getItem('jwt')) {
-        context.commit('userLoggedOut')
-        context.commit('setCurrentUser', {})
-        return
-      }
-      axios({
-        method: 'get',
-        url: 'user/verify_token',
-        headers: {
-          Authorization: `Basic ${localStorage.getItem('jwt')}`
+      return new Promise((resolve, reject) => {
+        if (!localStorage.getItem('jwt')) {
+          context.commit('userLoggedOut')
+          context.commit('setCurrentUser', {})
+          return resolve()
         }
-      })
-      .then((response) => {
-        context.commit('userLoggedIn')
-        context.commit('setCurrentUser', response.data.payload)
-      })
-      .catch(err => {
-        context.commit('userLoggedOut')
-        context.commit('setCurrentUser', {})
-        console.log(err)
+        axios({
+          method: 'get',
+          url: '/user/verify_token',
+          headers: {
+            Authorization: `Basic ${localStorage.getItem('jwt')}`
+          }
+        })
+        .then((response) => {
+          context.commit('userLoggedIn')
+          context.commit('setCurrentUser', response.data.payload)
+          return resolve()
+        })
+        .catch(err => {
+          context.commit('userLoggedOut')
+          context.commit('setCurrentUser', {})
+          console.log(err)
+          return reject()
+        })
       })
     },
     login(context, { username, password }) {
-      console.log(username, password)
       axios({
         method: 'post',
         url: 'user/login',
@@ -59,26 +62,64 @@ export default new Vuex.Store({
       })
       .then((response) => {
         localStorage.setItem('jwt', response.data.jwt);
-        context.commit('userLoggedIn')
-        return axios({
-          method: 'get',
-          url: 'user',
-          params: {
-            username: username
-          },
-          headers: {
-            Authorization: `Basic ${response.data.jwt}`
+        return context.dispatch('tokenLogin')
+      })
+      .catch(err => console.log(err))
+    },
+    logout(context) {
+      localStorage.removeItem('jwt');
+      context.commit('userLoggedOut')
+    },
+    createUser(context, { username, email, password }) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'post',
+          url: '/user',
+          data: {
+            username: username,
+            email: email,
+            password: password
           }
         })
+          .then((response) => resolve(response))
+          .catch(err => reject(err))
       })
-      .then(response => {
-        context.commit('setCurrentUser', response.data.payload[0])
+    },
+    createWorkout(context, {name, workoutType, duration, workoutAt}) {
+      let data = {
+        user_id: context.state.user.user.id,
+        name: name,
+        workout_type: workoutType,
+        duration: duration,
+        workout_at: workoutAt
+      }
+      console.log('data', data)
+      axios({
+        method: 'post',
+        url: 'workout',
+        data: data,
+        headers: {
+          Authorization: `Basic ${localStorage.getItem('jwt')}`
+        }
       })
-        .catch(err => {
-          context.commit('userLoggedOut')
-          context.commit('setCurrentUser', {})
-          console.log(err)
-        })
+        .then(() => context.dispatch('tokenLogin'))
+        .catch(err => console.log(err))
+    },
+    createWorkoutEntry(context, {type, amountPerSet, numSets, workoutId}) {
+      let data = {
+        type: type,
+        amount_per_set: amountPerSet,
+        num_sets: numSets,
+        workout_id: workoutId
+      }
+      return axios({
+        method: 'post',
+        url: '/workout_entry',
+        data: data,
+        headers: {
+          Authorization: `Basic ${localStorage.getItem('jwt')}`
+        }
+      })
     }
   },
   modules: {

@@ -1,5 +1,6 @@
 from flask import request, render_template, make_response, jsonify
 from datetime import datetime as dt
+import dateutil.parser
 from flask import current_app as app
 from workin_api.shared.auth_controller import authorize
 from workin_api.shared.exceptions import TokenAuthError, ResourceNotFoundError
@@ -28,7 +29,7 @@ def workout_post():
             name = json_req['name']
             is_completed = json_req['is_completed'] if 'is_completed' in json_req else None
             workout_type = json_req['workout_type']
-            workout_at = json_req['workout_at'] if 'workout_at' in json_req else None
+            workout_at = dateutil.parser.isoparse(json_req['workout_at']) if 'workout_at' in json_req else None
             workout_duration = json_req['workout_duration'] if 'workout_duration' in json_req else None
             user_id = json_req['user_id']
             new_workout = create_workout(

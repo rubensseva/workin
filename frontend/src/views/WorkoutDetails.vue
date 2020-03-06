@@ -26,15 +26,21 @@
         <div> Type: </div>
         <div> {{ workout.workout_type }} </div>
       </div>
+    </div>
       <div>
         Exercises in this workout:
       </div>
-    </div>
     <div class='workoutEntriesContainer workoutContainer'>
       <li v-for='workout_entry in workout.workout_entries' :key='workout_entry.id'>
         {{ workout_entry.entry_type }} | {{ workout_entry.amount_per_set }} | {{ workout_entry.num_sets }}
       </li>
     </div>
+    <div class="addWorkoutEntryMiniForm">
+      <input type="text" placeholder="entry type" v-model='newWorkoutEntry.type'/>
+      <input type="number" placeholder="amount per set" v-model='newWorkoutEntry.amountPerSet'/>
+      <input type="number" placeholder="number of sets" v-model='newWorkoutEntry.numSets'/>
+    </div>
+    <button class='primaryButton' v-on:click='createWorkoutEntry()'>Add new entry to workout</button>
   </div>
 </template>
 
@@ -44,15 +50,27 @@ export default {
   name: 'WorkoutDetails',
   data: function() {
     return {
-      workout: {}
+      workout: {},
+      newWorkoutEntry: {
+        type: '',
+        amountPerSet: 0,
+        numSets: 0
+      }
     }
   },
   mounted() {
     console.log(this.$route.params)
     console.log(this.$store.state.user.user.workouts)
     if (!this.$store.state.user.isAuthenticated) {
-      alert('Error when attempting to parse workout id url param as int')
-      this.$router.push('login')
+      this.$store.dispatch('tokenLogin')
+        .then(() => {
+          if (!this.$store.state.user.isAuthenticated) {
+            alert('You need to log in to view the workouts page');
+            this.$router.push('login');
+          }
+          this.workoutEntryUpdateCounter += 1;
+        })
+        .catch(err => console.log(err))
     }
     let workoutId = parseInt(this.$route.params.id);
     if (!workoutId) {
@@ -62,6 +80,31 @@ export default {
     let allWorkouts = this.$store.state.user.user.workouts;
     let workout = allWorkouts.filter(workout => workout.id === workoutId)[0]
     this.workout = workout
+  },
+  methods: {
+    createWorkoutEntry() {
+      this.$store.dispatch('createWorkoutEntry', { 
+        type: this.newWorkoutEntry.type, 
+        amountPerSet: this.newWorkoutEntry.amountPerSet,
+        numSets: this.newWorkoutEntry.numSets,
+        workoutId: this.$route.params.id
+      })
+        .then(() => {
+          return this.$store.dispatch('tokenLogin')
+        })
+        .then(() => {
+          let workoutId = parseInt(this.$route.params.id);
+          if (!workoutId) {
+            alert('Error when attempting to parse workout id url param as int')
+            this.$router.push('/')
+          }
+          let allWorkouts = this.$store.state.user.user.workouts;
+          let workout = allWorkouts.filter(workout => workout.id === workoutId)[0]
+          this.workout = workout
+          console.log('completed')
+        })
+        .catch(err => console.log(err))
+    }
   }
 }
 </script>

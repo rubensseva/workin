@@ -6,6 +6,7 @@
           {{ workout.created }}
       </router-link>
     </li>
+
   </div>
 </template>
 
@@ -45,6 +46,11 @@ li:last-child {
 li:hover {
   background-color: rgba(230, 230, 250, 1);
   cursor:pointer;
+}
+
+li a {
+  text-decoration: none;
+  color: rgba(50, 50, 50, 0.8)
 }
  
  

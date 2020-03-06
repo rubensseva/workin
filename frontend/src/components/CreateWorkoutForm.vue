@@ -2,8 +2,10 @@
   <div class='container'>
     <div> Create a new workout? </div>
     <input v-model='name' placeholder='name'/>
+    <input v-model='workoutType' placeholder='workoutType'/>
     <input v-model='duration' placeholder='duration'/>
-    <input v-model='workout_at' placeholder='time'/>
+    <input type='datetime-local' v-model='workoutAt'/>
+    <button class='primaryButton' v-on:click='createWorkoutSubmit'>Create workout</button>
   </div>
 </template>
 
@@ -15,8 +17,19 @@ export default {
   data: function() {
     return {
       name: '',
+      workoutType: '',
       duration: null,
-      workout_at: null,
+      workoutAt: null,
+    }
+  },
+  methods: {
+    createWorkoutSubmit() {
+      this.$store.dispatch('createWorkout', { 
+        name: this.name, 
+        workoutType: this.workoutType,
+        duration: this.duration,
+        workoutAt: this.workoutAt,
+      })
     }
   }
 }

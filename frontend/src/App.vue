@@ -34,7 +34,7 @@
 
 /* Custom global styles */
 .primaryButton {
-  margin: 10px 0px 20px 0px;
+  margin: 10px 0px 10px 0px;
   background-color: rgba(56, 56, 100, 1); /* Blue */
   border: 0;
   border-radius: 5px;

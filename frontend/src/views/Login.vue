@@ -4,9 +4,11 @@
       <p> Welcome to Workin! Please login below </p>
       <input placeholder='username' v-model='userName'/>
       <input placeholder='password' v-model='password'/>
-      <div v-if='this.$store.state.user.isAuthenticated'> You are logged in! </div>
       <button class='primaryButton' v-on:click='loginSubmit'>Submit</button>
+      <div class='loggedInText' v-if='this.$store.state.user.isAuthenticated'> You are logged in as: {{this.$store.state.user.user.username}} </div>
+      <div class='loggedOutText' v-if='this.$store.state.user.isAuthenticated' v-on:click='logOut'> Click here to log out </div>
     </div>
+    <router-link v-bind:to="'/user/new'">No user? No problem! Click here to create a new one</router-link>
   </div>
 </template>
 
@@ -22,6 +24,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch('tokenLogin')
+      .catch(err => console.log(err))
   },
   methods: {
     loginSubmit() {
@@ -29,6 +32,9 @@ export default {
         username: this.userName, 
         password: this.password
       })
+    },
+    logOut() {
+      this.$store.dispatch('logout')
     }
   }
 }
@@ -65,6 +71,29 @@ export default {
 
 .container > input:last-child {
   margin: 0px 0px 20px 0px
+}
+
+/* .loggedText { */
+/*   margin: 0 0 15px 0 */
+/* } */
+.loggedOutText {
+  margin: 0 0 15px 0
+}
+.loggedOutText:hover {
+  margin: 0 0 15px 0;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  font-size: 15px;
+  margin: 20px 0 0 0;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+a:hover {
+  opacity: 1;
+  cursor:pointer;
 }
 
 </style>

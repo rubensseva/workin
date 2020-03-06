@@ -27,8 +27,14 @@ export default {
   },
   mounted() { 
     if (!this.$store.state.user.isAuthenticated) {
-      alert('please login first, redirecting...');
-      this.$router.push('login')
+      this.$store.dispatch('tokenLogin')
+        .then(() => {
+          if (!this.$store.state.user.isAuthenticated) {
+            alert('You need to log in to view the workouts page');
+            this.$router.push('login');
+          }
+        })
+        .catch(err => console.log(err))
     }
   }
 }
