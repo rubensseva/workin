@@ -1,10 +1,14 @@
 <template>
-  <div class='container'>
+  <form class='container' @submit='createWorkoutSubmit'>
     <div> Create a new workout plan? </div>
-    <input v-model='name' placeholder='name'/>
-    <input v-model='weekDayStart' placeholder='week day start'/>
-    <button class='primaryButton' v-on:click='createWorkoutSubmit'>Create workout plan</button>
-  </div>
+    <input required type=text v-model='name' placeholder='name'/>
+    <input required type=number v-model='weekDayStart' placeholder='week day start'/>
+    <input
+      class='primaryButton'
+      type='submit'
+      value='Create workout plan'
+    >
+  </form>
 </template>
 
 

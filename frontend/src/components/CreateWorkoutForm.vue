@@ -1,12 +1,16 @@
 <template>
-  <div class='container'>
+  <form class='container' @submit='createWorkoutSubmit'>
     <div> Create a new workout? </div>
-    <input v-model='name' placeholder='name'/>
-    <input v-model='workoutType' placeholder='workoutType'/>
-    <input v-model='duration' placeholder='duration'/>
-    <input type='datetime-local' v-model='workoutAt'/>
-    <button class='primaryButton' v-on:click='createWorkoutSubmit'>Create workout</button>
-  </div>
+    <input required type=text v-model='name' placeholder='name'/>
+    <input required type=text v-model='workoutType' placeholder='workoutType'/>
+    <input required type=number v-model='duration' placeholder='duration'/>
+    <input required pattern='/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)/' type='datetime-local' v-model='workoutAt'/>
+    <input
+      class='primaryButton'
+      type='submit'
+      value='Submit'
+    >
+  </form>
 </template>
 
 
@@ -24,6 +28,7 @@ export default {
   },
   methods: {
     createWorkoutSubmit() {
+      console.log(this.workoutAt);
       this.$store.dispatch('createWorkout', { 
         name: this.name, 
         workoutType: this.workoutType,

@@ -61,6 +61,7 @@ export default new Vuex.Store({
         }
       })
       .then((response) => {
+        console.log("did we get a response?");
         localStorage.setItem('jwt', response.data.jwt);
         return context.dispatch('tokenLogin')
       })

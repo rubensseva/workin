@@ -1,13 +1,17 @@
 <template>
   <div class='root'>
-    <div class='container'>
+    <form class='container' v-on:submit.prevent='loginSubmit'>
       <p> Welcome to Workin! Please login below </p>
-      <input placeholder='username' v-model='userName'/>
-      <input placeholder='password' v-model='password'/>
-      <button class='primaryButton' v-on:click='loginSubmit'>Submit</button>
+      <input required type=name placeholder='username' v-model='userName'/>
+      <input required type=password placeholder='password' v-model='password'/>
+      <input
+        class='primaryButton'
+        type='submit'
+        value='Submit'
+      />
       <div class='loggedInText' v-if='this.$store.state.user.isAuthenticated'> You are logged in as: {{this.$store.state.user.user.username}} </div>
       <div class='loggedOutText' v-if='this.$store.state.user.isAuthenticated' v-on:click='logOut'> Click here to log out </div>
-    </div>
+    </form>
     <router-link v-bind:to="'/user/new'">No user? No problem! Click here to create a new one</router-link>
   </div>
 </template>
@@ -28,6 +32,7 @@ export default {
   },
   methods: {
     loginSubmit() {
+      console.log('logging in');
       this.$store.dispatch('login', { 
         username: this.userName, 
         password: this.password
@@ -50,20 +55,35 @@ export default {
 }
 
 .container {
+  margin: 40px 0px 0px 0px;
+  position: relative;
   display: flex;
   align-items: center;
   flex-direction: column;
   flex-wrap: nowrap;
   width: 400px;
-  background-color: rgba(56, 56, 80, 0.5);
   border-radius: 5px;
+}
+
+.container::after {
+    content:'';
+    height: 100%;
+    width: 100%;
+    background-color: var(--main-color);
+    position:absolute;
+    top:0;
+    left:0;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    -o-box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    opacity:0.2;
+    z-index: -1;
 }
 
 .container > input {
   margin: 0px 0px 10px 0px;
   border: 0;
-  color: inherit;
-  font: inherit;
   outline: 0;
   -webkit-transition: background-color .3s;
   transition: background-color .3s;
@@ -73,9 +93,6 @@ export default {
   margin: 0px 0px 20px 0px
 }
 
-/* .loggedText { */
-/*   margin: 0 0 15px 0 */
-/* } */
 .loggedOutText {
   margin: 0 0 15px 0
 }

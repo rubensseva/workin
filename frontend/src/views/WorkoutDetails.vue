@@ -36,14 +36,14 @@
         {{ workout_entry.entry_type }} | {{ workout_entry.amount_per_set }} | {{ workout_entry.num_sets }} | {{ workout_entry.duration }} | {{ workout_entry.weight }}
       </li>
     </div>
-    <div class="addWorkoutEntryMiniForm">
-      <input type="text" placeholder="entry type" v-model='newWorkoutEntry.type'/>
-      <input type="number" placeholder="amount per set" v-model='newWorkoutEntry.amountPerSet'/>
-      <input type="number" placeholder="number of sets" v-model='newWorkoutEntry.numSets'/>
-      <input type="number" placeholder="duration" v-model='newWorkoutEntry.duration'/>
-      <input type="number" placeholder="weight" v-model='newWorkoutEntry.weight'/>
-    </div>
-    <button class='primaryButton' v-on:click='createWorkoutEntry()'>Add new entry to workout</button>
+    <form class="addWorkoutEntryMiniForm" @submit='createWorkoutEntry'>
+      <input required type="text" placeholder="entry type" v-model='newWorkoutEntry.type'/>
+      <input required type="number" placeholder="amount per set" v-model='newWorkoutEntry.amountPerSet'/>
+      <input required type="number" placeholder="number of sets" v-model='newWorkoutEntry.numSets'/>
+      <input required type="number" placeholder="duration" v-model='newWorkoutEntry.duration'/>
+      <input required type="number" placeholder="weight" v-model='newWorkoutEntry.weight'/>
+      <input class='primaryButton' type='submit' value='Add new entry to workout'/>
+    </form>
   </div>
 </template>
 
