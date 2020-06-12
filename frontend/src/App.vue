@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <v-dialog />
     <div id="nav">
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
@@ -33,10 +34,11 @@
 }
 
 @font-face {
-font-family: "Alcubierre";
-src: url("assets/fonts/Alcubierre.otf");
+/* font-family: "Alcubierre"; */
+font-family: "SourceSansPro-Regular";
+src: url("assets/fonts/SourceSansPro-Regular.ttf");
 src:
-url("assets/fonts/Alcubierre.otf") format("otf"),
+url("assets/fonts/SourceSansPro-Regular.ttf") format("ttf"),
 }
 
 body {
@@ -46,7 +48,7 @@ body {
 #app {
   margin: 0;
   padding: 0;
-  font-family: Alcubierre, Avenir, Helvetica, Arial, sans-serif, Alcubierre;
+  font-family: SourceSansPro-Regular, Alcubierre, Avenir, Helvetica, Arial, sans-serif, Alcubierre;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -82,7 +84,7 @@ body {
   text-decoration: none;
   font-weight: bold;
   font-size: 1.2em;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 1);
   z-index: 99;
 }
 
@@ -92,7 +94,7 @@ body {
   border-bottom: 1.3px solid var(--second-color);
   width: 0;
   position: absolute;
-  right: 0;
+  left: 0;
   top: 37px;
   -webkit-transition: 1s ease;
   transition: 1s ease;
@@ -111,21 +113,31 @@ body {
 .primaryButton {
   margin: 10px 0px 10px 0px;
   background-color: var(--main-color);
-  border: 0;
+  background-position: center;
+  border: none;
   border-radius: 5px;
   color: white;
   padding: 10px 15px;
   text-align: center;
   text-decoration: none;
-  /* display: inline-block; */
   font-size: 14px;
   cursor:pointer;
-  opacity: 0.8;
-  transition: 0.5s;
+  transition: background 0.8s;
+  box-shadow: 0 0 4px #999;
+  outline: none;
 }
 
 .primaryButton:hover {
-  opacity: 1;
+  background: var(--main-color-shaded-3) radial-gradient(circle, transparent 1%, var(--main-color-shaded-4) 1%) center/15000%;
 }
+
+.primaryButton:active {
+  background-color: var(--main-color-shaded-2);
+  background-size: 100%;
+  transition: background 0s;
+}
+
+
+
 
 </style>

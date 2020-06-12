@@ -1,9 +1,11 @@
 <template>
   <div>
     Workout plans viewer
-    <li v-for='workoutPlan in workoutPlans' :key='workoutPlan.id'>
-      <WorkoutPlanListElement v-bind:workoutPlan='workoutPlan'/>
-    </li>
+    <div class='workoutPlanContainer'>
+      <div class='workoutPlanItem' v-for='workoutPlan in workoutPlans' :key='workoutPlan.id'>
+        <WorkoutPlanListElement v-bind:workoutPlan='workoutPlan'/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,6 +23,21 @@ export default {
 
 
 <style scoped>
+
+.workoutPlanContainer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  place-items: center;
+  perspective: 1000px;
+}
+
+.workoutPlanItem {
+  margin: 20px;
+  
+}
+
+
 li {
   list-style-type: none;
 }

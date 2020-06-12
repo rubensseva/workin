@@ -2,8 +2,15 @@
   <div class='container'>
     <li v-for='workout in workouts' :key='workout.id'>
       <router-link v-bind:to="'/workout/' + workout.id">
-          {{ workout.name }} | 
-          {{ workout.created }}
+        <div>
+          {{ workout.name }}
+        </div>
+        <div>
+          |
+        </div>
+        <div>
+          {{ formatCreatedTime(workout.created) }}
+        </div>
       </router-link>
     </li>
 
@@ -11,9 +18,16 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   name: 'ViewWorkouts',
-  props: ['workouts']
+  props: ['workouts'],
+  methods: {
+            formatCreatedTime : function (date) {
+                return moment(date).format('ddd DD MMM YY');
+            }
+        }
 }
 </script>
 
@@ -28,6 +42,16 @@ export default {
   align-items: center;
   max-width:500px;
 }
+
+a {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+a div {
+  width: 200px;
+}
+
  
 li {
   list-style-type: none;

@@ -1,6 +1,6 @@
 <template>
   <div class='container'>
-    <div> Workout details </div>
+    <h1> Workout details </h1>
     <div class='workoutDetailsContainer workoutContainer'>
       <div>
         <div> Id: </div>
@@ -30,20 +30,84 @@
       <div>
         Exercises in this workout
       </div>
-      type | amount per set | num sets | duration | weight
+      <div class='entryWrapper workoutContainer'>
+        <div class='entryField'>
+          type
+        </div>
+        <div class='entryLine'>
+          |
+        </div>
+        <div class='entryField'>
+          amount per set
+        </div>
+        <div class='entryLine'>
+          | 
+        </div>
+        <div class='entryField'>
+          num sets 
+        </div>
+        <div class='entryLine'>
+          |
+        </div>
+        <div class='entryField'>
+          duration 
+        </div>
+        <div class='entryLine'>
+          |
+        </div>
+        <div class='entryField'>
+          weight
+        </div>
+      </div>
     <div class='workoutEntriesContainer workoutContainer'>
       <li v-for='workout_entry in workout.workout_entries' :key='workout_entry.id'>
-        {{ workout_entry.entry_type }} | {{ workout_entry.amount_per_set }} | {{ workout_entry.num_sets }} | {{ workout_entry.duration }} | {{ workout_entry.weight }}
+        <div class='entryWrapper'>
+          <div class='entryField'>
+            {{ workout_entry.entry_type }}
+          </div>
+          <div class='entryLine'>
+            |
+          </div>
+          <div class='entryField'>
+            {{ workout_entry.amount_per_set }}
+          </div>
+          <div class='entryLine'>
+            | 
+          </div>
+          <div class='entryField'>
+            {{ workout_entry.num_sets }}
+          </div>
+          <div class='entryLine'>
+            |
+          </div>
+          <div class='entryField'>
+            {{ workout_entry.duration }}
+          </div>
+          <div class='entryLine'>
+            |
+          </div>
+          <div class='entryField'>
+            {{ workout_entry.weight }}
+          </div>
+        </div>
       </li>
     </div>
-    <form class="addWorkoutEntryMiniForm" @submit='createWorkoutEntry'>
-      <input required type="text" placeholder="entry type" v-model='newWorkoutEntry.type'/>
-      <input required type="number" placeholder="amount per set" v-model='newWorkoutEntry.amountPerSet'/>
-      <input required type="number" placeholder="number of sets" v-model='newWorkoutEntry.numSets'/>
-      <input required type="number" placeholder="duration" v-model='newWorkoutEntry.duration'/>
-      <input required type="number" placeholder="weight" v-model='newWorkoutEntry.weight'/>
-      <input class='primaryButton' type='submit' value='Add new entry to workout'/>
-    </form>
+
+    <button class='primaryButton' v-on:click="openModal">
+      Add an entry
+    </button>
+
+    <modal name="hello-world">
+      <form class="addWorkoutEntryMiniForm" @submit='createWorkoutEntry'>
+        <input required type="text" placeholder="entry type" v-model='newWorkoutEntry.type'/>
+        <input required type="number" placeholder="amount per set" v-model='newWorkoutEntry.amountPerSet'/>
+        <input required type="number" placeholder="number of sets" v-model='newWorkoutEntry.numSets'/>
+        <input required type="number" placeholder="duration" v-model='newWorkoutEntry.duration'/>
+        <input required type="number" placeholder="weight" v-model='newWorkoutEntry.weight'/>
+        <input class='primaryButton' type='submit' value='Add new entry to workout'/>
+      </form>
+    </modal>
+
   </div>
 </template>
 
@@ -64,8 +128,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.params)
-    console.log(this.$store.state.user.user.workouts)
     if (!this.$store.state.user.isAuthenticated) {
       this.$store.dispatch('tokenLogin')
         .then(() => {
@@ -87,6 +149,9 @@ export default {
     this.workout = workout
   },
   methods: {
+    openModal() {
+      this.$modal.show('hello-world');
+    },
     createWorkoutEntry() {
       this.$store.dispatch('createWorkoutEntry', { 
         type: this.newWorkoutEntry.type, 
@@ -129,6 +194,7 @@ export default {
 
 .workoutContainer {
   width: 60%;
+  margin-top: 20px;
 }
 
 .workoutDetailsContainer {
@@ -171,6 +237,29 @@ li:last-child {
 
 li:hover {
   background-color: rgba(230, 230, 250, 1);
+}
+
+.entryWrapper {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.entryField {
+  width: 150px;
+}
+
+.entryLine {
+  width: 10px
+}
+
+.addWorkoutEntryMiniForm {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+}
+
+.addWorkoutEntryMiniForm input {
+  margin: 10px;
 }
 
 </style>
